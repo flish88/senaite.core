@@ -70,7 +70,8 @@ schema = Schema((
             'warn_max',
             'hidemin',
             'hidemax',
-            'rangecomment'
+            'rangecomment',
+            'calculation',
         ),
         required_subfields=('keyword', 'min', 'max'),
         subfield_validators={
@@ -86,6 +87,7 @@ schema = Schema((
             'hidemin': _('< Min'),
             'hidemax': _('> Max'),
             'rangecomment': _('Range Comment'),
+            'calculation': _('Specification Calculation'),
         },
         widget=AnalysisSpecificationWidget(
             checkbox_bound=0,
@@ -206,14 +208,19 @@ class ResultsRangeDict(dict):
         self["max"] = self.max
         self["warn_min"] = self.warn_min
         self["warn_max"] = self.warn_max
+        self["calculation"] = self.calculation
+
+    def __repr__(self):
+        return "<{} [{}; {}]>".format(
+            self.__class__.__name__, self.min, self.max)
 
     @property
     def min(self):
-        return self.get("min", '')
+        return self.get("min", "")
 
     @property
     def max(self):
-        return self.get("max", '')
+        return self.get("max", "")
 
     @property
     def warn_min(self):
@@ -221,7 +228,11 @@ class ResultsRangeDict(dict):
 
     @property
     def warn_max(self):
-        return self.get('warn_max', self.max)
+        return self.get("warn_max", self.max)
+
+    @property
+    def calculation(self):
+        return self.get("calculation", "")
 
     @min.setter
     def min(self, value):
@@ -233,8 +244,12 @@ class ResultsRangeDict(dict):
 
     @warn_min.setter
     def warn_min(self, value):
-        self['warn_min'] = value
+        self["warn_min"] = value
 
     @warn_max.setter
     def warn_max(self, value):
-        self['warn_max'] = value
+        self["warn_max"] = value
+
+    @calculation.setter
+    def calculation(self, value):
+        self["calculation"] = value

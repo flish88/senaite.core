@@ -920,7 +920,8 @@ class AnalysesView(BikaListingView):
         """Set the results range to the item passed in"""
         # Everyone can see valid-ranges
         item['Specification'] = ''
-        results_range = analysis_brain.getResultsRange
+        analysis = api.get_object(analysis_brain)
+        results_range = analysis.getResultsRange()
         if not results_range:
             return
         min_str = results_range.get('min', '')

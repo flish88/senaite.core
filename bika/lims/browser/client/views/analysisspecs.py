@@ -38,7 +38,7 @@ class ClientAnalysisSpecsView(BikaListingView):
         self.show_select_row = False
         self.show_select_column = True
         self.pagesize = 50
-        self.form_id = "analysisspecs"
+        self.form_id = "analysisspecs_listing"
 
         self.icon = self.portal_url + "/++resource++bika.lims.images/analysisspec_big.png"
         self.title = self.context.translate(_("Analysis Specifications"))

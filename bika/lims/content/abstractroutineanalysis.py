@@ -317,16 +317,27 @@ class AbstractRoutineAnalysis(AbstractAnalysis):
         :return: A dictionary with keys "min", "max", "warn_min" and "warn_max"
         :rtype: dict
         """
-        specs = ResultsRangeDict()
         analysis_request = self.getRequest()
         if not analysis_request:
-            return specs
+            return ResultsRangeDict()
 
         keyword = self.getKeyword()
         ar_ranges = analysis_request.getResultsRange()
         # Get the result range that corresponds to this specific analysis
         an_range = [rr for rr in ar_ranges if rr.get('keyword', '') == keyword]
-        return an_range and an_range[0] or specs
+
+        rr = an_range and an_range[0].copy() or {}
+
+        # Calculated Specification
+        calc_uid = rr.get("calculation")
+        calc = api.get_object_by_uid(calc_uid, None)
+        if calc:
+            spec = rr.copy()
+            spec["analysis_uid"] = self.UID()
+            calc_spec = calc.calculate_result(mapping={"spec": spec})
+            rr.update(calc_spec)
+
+        return ResultsRangeDict(rr)
 
     @security.public
     def getSiblings(self, retracted=False):

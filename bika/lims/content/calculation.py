@@ -9,6 +9,7 @@ import importlib
 import inspect
 import math
 import re
+import string
 
 import transaction
 from AccessControl import ClassSecurityInfo
@@ -33,6 +34,8 @@ from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.WorkflowCore import WorkflowException
 from Products.CMFPlone.utils import safe_unicode
 from zope.interface import implements
+
+marker = object()
 
 
 schema = BikaSchema.copy() + Schema((
@@ -394,6 +397,28 @@ class Calculation(BaseFolder, HistoryAwareMixin):
 
         members = dict(inspect.getmembers(mod))
         return members.get(member)
+
+    def calculate_result(self, mapping=None, default=marker):
+        """Calculate the result
+        """
+        if mapping is None:
+            mapping = {}
+        formula = self.getMinifiedFormula()
+        formula = string.Template(formula).safe_substitute(mapping)
+        formula = formula.replace("[", "%(").replace("]", ")")
+
+        try:
+            formula = formula.format(**mapping)
+        except KeyError:
+            pass
+
+        try:
+            result = eval(formula, self._getGlobals())
+        except (TypeError, ZeroDivisionError, KeyError, ImportError) as e:
+            if default is marker:
+                raise e
+            return default
+        return result
 
     def workflow_script_activate(self):
         wf = getToolByName(self, 'portal_workflow')

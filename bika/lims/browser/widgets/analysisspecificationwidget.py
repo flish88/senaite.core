@@ -95,6 +95,10 @@ class AnalysisSpecificationView(BikaListingView):
             ("hidemax", {
                 "title": _("> Max"),
                 "sortable": False}),
+            ("calculation", {
+                "title": _("Specification Calculation"),
+                "type": "choices",
+                "sortable": False}),
             ("rangecomment", {
                 "title": _("Range comment"),
                 "sortable": False,
@@ -120,6 +124,26 @@ class AnalysisSpecificationView(BikaListingView):
             None, set(map(lambda item: item.get("category"), items)))
 
         return sorted(categories)
+
+    def get_calculations(self):
+        """Returns the calculations
+        """
+        query = {
+            "portal_type": "Calculation",
+            "sort_on": "sortable_title",
+            "sort_order": "ascending",
+        }
+        return api.search(query, catalog="bika_setup_catalog")
+
+    def get_calculations_choices(self):
+        """Build a list of listing specific calculation choices
+        """
+        calculations = self.get_calculations()
+        return map(
+            lambda brain: {
+                "ResultValue": api.get_uid(brain),
+                "ResultText": api.get_title(brain)},
+            calculations)
 
     def get_services(self):
         """returns all services
@@ -161,6 +185,7 @@ class AnalysisSpecificationView(BikaListingView):
                 "hidemin": "",
                 "hidemax": "",
                 "rangecomment": "",
+                "calculation": "",
             }
 
         # Icons
@@ -199,16 +224,19 @@ class AnalysisSpecificationView(BikaListingView):
             "hidemin": specresults.get("hidemin", ""),
             "hidemax": specresults.get("hidemax", ""),
             "rangecomment": specresults.get("rangecomment", ""),
+            "calculation": specresults.get("calculation", ""),
             "replace": {},
             "before": {},
             "after": {
                 "service": after_icons,
             },
-            "choices": {},
+            "choices": {
+                "calculation": self.get_calculations_choices()
+            },
             "class": "state-%s" % (state),
             "state_class": "state-%s" % (state),
             "allow_edit": ["min", "max", "warn_min", "warn_max", "hidemin",
-                           "hidemax", "rangecomment"],
+                           "hidemax", "rangecomment", "calculation"],
             "table_row_class": "even",
         }
 
@@ -281,7 +309,9 @@ class AnalysisSpecificationWidget(TypesWidget):
         for uid, keyword in form["keyword"][0].items():
             s_min = self._get_spec_value(form, uid, "min")
             s_max = self._get_spec_value(form, uid, "max")
-            if not s_min and not s_max:
+            s_calc = self._get_spec_value(form, uid, "calculation",
+                                          check_floatable=False)
+            if not any([s_min, s_max, s_calc]):
                 # If user has not set value neither for min nor max, omit this
                 # record. Otherwise, since 'min' and 'max' are defined as
                 # mandatory subfields, the following message will appear after
@@ -298,7 +328,9 @@ class AnalysisSpecificationWidget(TypesWidget):
                 "hidemin": self._get_spec_value(form, uid, "hidemin"),
                 "hidemax": self._get_spec_value(form, uid, "hidemax"),
                 "rangecomment": self._get_spec_value(form, uid, "rangecomment",
-                                                     check_floatable=False)})
+                                                     check_floatable=False),
+                "calculation": s_calc,
+            })
         return values, {}
 
     def _get_spec_value(self, form, uid, key, check_floatable=True,

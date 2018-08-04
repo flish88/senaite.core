@@ -32,6 +32,7 @@ from bika.lims.catalog import CATALOG_ANALYSIS_LISTING
 from bika.lims.config import PRIORITIES
 from bika.lims.config import PROJECTNAME
 from bika.lims.content.bikaschema import BikaSchema
+from bika.lims.content.analysisspec import ResultsRangeDict
 # Bika Interfaces
 from bika.lims.interfaces import IAnalysisRequest
 from bika.lims.interfaces import ISamplePrepWorkflow
@@ -813,7 +814,7 @@ schema = BikaSchema.copy() + Schema((
         required=0,
         type='resultsrange',
         subfields=('keyword', 'min', 'max', 'warn_min', 'warn_max', 'hidemin',
-                   'hidemax', 'rangecomment'),
+                   'hidemax', 'rangecomment', 'calculation'),
         widget=ComputedWidget(visible=False),
     ),
 
@@ -2611,7 +2612,8 @@ class AnalysisRequest(BaseFolder):
         out_specs = [sp for sp in specs_range if sp['keyword'] not in keywords]
         # Add manually set ranges
         out_specs.extend(an_specs)
-        return out_specs
+        # return a list of ResultRangeDict objects
+        return map(lambda spec: ResultsRangeDict(spec), out_specs)
 
     def getDatePublished(self):
         """
