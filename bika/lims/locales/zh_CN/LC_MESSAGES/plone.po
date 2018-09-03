@@ -3,6 +3,7 @@
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 # Translators:
 # Ramon Bartl <rb@ridingbytes.com>, 2018
+# liangyuandong <liangyuandong.1990@aliyun.com>, 201809
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
@@ -22,11 +23,11 @@ msgstr ""
 
 #. Default: "AR Imports"
 msgid "AR Imports"
-msgstr "AR导入"
+msgstr "分析请求导入"
 
 #: bika/lims/profiles/default/types/ARTemplate.xml
 msgid "AR Template"
-msgstr "分析模板"
+msgstr "分析请求模板"
 
 #: bika/lims/profiles/default/controlpanel.xml
 #: bika/lims/profiles/default/types/ARTemplates.xml
@@ -36,7 +37,7 @@ msgstr "分析请求模板"
 
 #: bika/lims/profiles/default/types/ARReport.xml
 msgid "ARReport"
-msgstr "分析报告"
+msgstr "分析请求报告"
 
 # Manual Workflow State and Transition MsgIds
 # Despite the fact, that these are defined in the "bika" domain, they are not
@@ -44,22 +45,22 @@ msgstr "分析报告"
 # in the action menu of Plone.
 # Please don't remove
 msgid "Activate"
-msgstr ""
+msgstr "激活"
 
 msgid "Active"
-msgstr ""
+msgstr "激活"
 
 #: bika/lims/profiles/default/types/Worksheet.xml
 msgid "Add Analyses"
-msgstr "加分析单"
+msgstr "增加分析单"
 
 #: bika/lims/profiles/default/types/Worksheet.xml
 msgid "Add Blank Reference"
-msgstr "加空描写提"
+msgstr "增加背景参数"
 
 #: bika/lims/profiles/default/types/Worksheet.xml
 msgid "Add Control Reference"
-msgstr "加控制"
+msgstr "增加控制参数"
 
 #: bika/lims/profiles/default/types/Worksheet.xml
 msgid "Add Duplicate"
